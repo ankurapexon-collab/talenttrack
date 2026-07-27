@@ -4,9 +4,10 @@
 const MODEL_CANDIDATES = [
   process.env.GEMINI_MODEL,
   'gemini-2.5-flash',
-  'gemini-2.0-flash',
-  'gemini-1.5-flash',
-  'gemini-flash-latest'
+  'gemini-2.5-flash-lite',
+  'gemini-flash-latest',
+  'gemini-3.1-flash-lite',
+  'gemini-2.0-flash'
 ].filter(Boolean);
 
 async function callGemini(modelName, apiKey, system, prompt, includeThinkingConfig) {
@@ -105,20 +106,20 @@ export default async function handler(req, res) {
         continue;
       }
 
-      if (status === 404 || status === 400) {
-        lastError = data?.error?.message || `Model "${modelName}" unavailable (status ${status}).`;
+      // If status is 429 (Quota exceeded / Rate limit) OR 404/400 (Unavailable model),
+      // AUTOMATICALLY TRY THE NEXT MODEL CANDIDATE INSTEAD OF STOPPING!
+      if (status === 429 || status === 404 || status === 400) {
+        lastError = data?.error?.message || `Model "${modelName}" quota or rate limit hit (status ${status}).`;
         continue;
       }
 
-      res.status(status).json({ error: data?.error?.message || `Gemini request failed with status ${status}` });
-      return;
-
+      lastError = data?.error?.message || `Request failed with status ${status}`;
     } catch (err) {
       lastError = `Network error contacting Gemini (${modelName}): ${err.message}`;
     }
   }
 
   res.status(502).json({
-    error: `All Gemini model requests failed. Last error: ${lastError}`
+    error: `Temporary rate limit hit across Gemini Free Tier. Last error: ${lastError}. Please retry in 30 seconds.`
   });
 }
