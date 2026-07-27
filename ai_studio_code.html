@@ -1,0 +1,493 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>TalentTrack — Recruitment Toolkit</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;600;700&family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --ink:#0F1424; --panel-dark:#171D30; --panel-dark-2:#1E2540;
+    --paper:#F5F6FA; --panel-light:#FFFFFF;
+    --border-light:#E3E6EF; --border-dark:#2A3252;
+    --indigo:#4C5FD5; --indigo-soft:#E9EBFC;
+    --amber:#F5A623; --amber-soft:#FFF3DE;
+    --green:#2FAE6B; --green-soft:#E4F7ED;
+    --red:#E5484D; --red-soft:#FDE7E7;
+    --purple:#8B5CF6; --purple-soft:#F1EBFD;
+    --teal:#0EA5A5; --teal-soft:#E1F6F6;
+    --text-dark:#101425; --text-muted-dark:#5B6178;
+    --text-light:#EDEFFA; --text-muted-light:#939AC0;
+    --radius:10px;
+    --font-display:'Space Grotesk',system-ui,sans-serif;
+    --font-body:'Inter',system-ui,sans-serif;
+    --font-mono:'JetBrains Mono',ui-monospace,monospace;
+  }
+  * { box-sizing:border-box; }
+  html,body{margin:0;padding:0;}
+  body{font-family:var(--font-body);background:var(--paper);color:var(--text-dark);min-height:100vh;display:flex;flex-direction:column;transition:background .25s,color .25s;}
+  body.dark{background:var(--ink);color:var(--text-light);}
+
+  .app{display:flex;flex:1;min-height:100vh;}
+
+  /* ---------- Sidebar ---------- */
+  .sidebar{
+    width:250px; flex-shrink:0;
+    background:var(--panel-light); border-right:1px solid var(--border-light);
+    display:flex; flex-direction:column;
+    position:sticky; top:0; height:100vh; overflow-y:auto;
+  }
+  body.dark .sidebar{background:var(--panel-dark); border-color:var(--border-dark);}
+  .brand{display:flex;align-items:center;gap:12px;padding:20px 18px 16px 18px;}
+  .brand-mark{width:34px;height:34px;border-radius:8px;background:linear-gradient(135deg,var(--indigo),#7A87F0);display:flex;align-items:center;justify-content:center;flex-shrink:0;}
+  .brand-mark svg{width:18px;height:18px;}
+  .brand-name{font-family:var(--font-display);font-weight:700;font-size:17px;letter-spacing:-0.01em;display:block;}
+  .brand-tag{display:block;font-size:9.5px;font-family:var(--font-mono);color:var(--indigo);font-weight:700;margin-top:2px;}
+  body.dark .brand-tag{color:#A6B0F5;}
+
+  .nav{padding:6px 10px; flex:1;}
+  .nav-item{
+    display:flex; align-items:center; gap:10px;
+    padding:10px 12px; border-radius:8px; cursor:pointer;
+    font-size:13.5px; font-weight:500; color:var(--text-muted-light);
+    margin-bottom:2px; border:none; background:transparent; width:100%; text-align:left;
+    font-family:var(--font-body); transition:all .15s ease;
+  }
+  .nav-item .emoji{font-size:15px; width:18px; text-align:center;}
+  .nav-item:hover{background:var(--indigo-soft); color:var(--indigo);}
+  body.dark .nav-item{color:var(--text-muted-dark);}
+  body.dark .nav-item:hover{background:rgba(76,95,213,0.15); color:#A6B0F5;}
+  .nav-item.active{background:var(--indigo); color:white;}
+  body.dark .nav-item.active{background:var(--indigo); color:white;}
+
+  .sidebar-foot{padding:14px; border-top:1px solid var(--border-light);}
+  body.dark .sidebar-foot{border-color:var(--border-dark);}
+  .designer-tag{font-size:11px; font-weight:600; color:var(--text-muted-light); text-align:center; padding:6px;}
+  body.dark .designer-tag{color:var(--text-muted-dark);}
+
+  /* ---------- Main ---------- */
+  .main{flex:1; min-width:0; display:flex; flex-direction:column;}
+  .topbar{
+    display:flex; align-items:center; justify-content:space-between;
+    padding:14px 28px; border-bottom:1px solid var(--border-light);
+    position:sticky; top:0; background:var(--paper); z-index:20; gap:15px;
+  }
+  body.dark .topbar{background:var(--ink); border-color:var(--border-dark);}
+  .topbar-left h1{font-family:var(--font-display); font-size:18px; font-weight:700; margin:0;}
+  .topbar-left p{margin:2px 0 0 0; font-size:12px; color:var(--text-muted-light);}
+  body.dark .topbar-left p{color:var(--text-muted-dark);}
+
+  .topbar-center{text-align:center; flex:1;}
+  .ats-banner-tag{
+    display:inline-block; font-family:var(--font-display); font-size:13px; font-weight:700;
+    color:var(--indigo); background:var(--indigo-soft); padding:5px 14px; border-radius:20px;
+    letter-spacing:0.03em; border:1px solid rgba(76,95,213,0.2);
+  }
+  body.dark .ats-banner-tag{background:rgba(76,95,213,0.18); color:#A6B0F5; border-color:rgba(166,176,245,0.2);}
+
+  .topbar-right{display:flex; align-items:center; gap:12px;}
+  .clock-badge{
+    font-family:var(--font-mono); font-size:12px; font-weight:600;
+    background:var(--panel-light); border:1px solid var(--border-light);
+    padding:6px 12px; border-radius:8px; color:var(--text-dark); whitespace:nowrap;
+  }
+  body.dark .clock-badge{background:var(--panel-dark); border-color:var(--border-dark); color:var(--text-light);}
+
+  .btn-topbar{padding:6px 12px; font-size:12px; border-radius:8px; font-weight:600; cursor:pointer;}
+
+  .toggle-btn{width:34px;height:34px;border-radius:50%;border:1px solid var(--border-light);background:var(--panel-light);cursor:pointer;display:flex;align-items:center;justify-content:center;color:var(--text-dark);}
+  body.dark .toggle-btn{background:var(--panel-dark-2); border-color:var(--border-dark); color:var(--text-light);}
+  .toggle-btn svg{width:16px;height:16px;}
+
+  .shell{max-width:1150px; margin:0 auto; padding:24px 28px 50px 28px; width:100%; flex:1;}
+
+  /* ---------- Aesthetic Welcome Banner ---------- */
+  .welcome-card{
+    background:linear-gradient(135deg, var(--indigo) 0%, #6366F1 100%);
+    color:white; border-radius:14px; padding:22px 26px; margin-bottom:20px;
+    box-shadow:0 8px 24px rgba(76,95,213,0.18); display:flex; justify-content:space-between; align-items:center;
+  }
+  .welcome-card h2{margin:0 0 4px 0; font-family:var(--font-display); font-size:20px;}
+  .welcome-card p{margin:0; font-size:13px; opacity:0.92; line-height:1.4;}
+
+  /* ---------- Shared components ---------- */
+  .card{background:var(--panel-light); border:1px solid var(--border-light); border-radius:var(--radius); padding:20px;}
+  body.dark .card{background:var(--panel-dark); border-color:var(--border-dark);}
+  .card + .card{margin-top:16px;}
+  .two-col{display:grid; grid-template-columns:1fr 1fr; gap:16px;}
+  @media(max-width:800px){.two-col{grid-template-columns:1fr;}}
+
+  .field{margin-bottom:14px;}
+  .field label{display:block;font-size:12px;font-weight:600;margin-bottom:6px;color:var(--text-muted-light);}
+  body.dark .field label{color:var(--text-muted-dark);}
+  .field input, .field select, .field textarea{
+    width:100%; padding:10px 12px; border-radius:8px; border:1px solid var(--border-light);
+    background:var(--paper); color:inherit; font-family:var(--font-body); font-size:13.5px;
+  }
+  body.dark .field input, body.dark .field select, body.dark .field textarea{background:var(--ink); border-color:var(--border-dark);}
+  .field textarea{resize:vertical; min-height:90px; font-family:var(--font-body);}
+  .field input:focus, .field select:focus, .field textarea:focus{outline:2px solid var(--indigo); outline-offset:-1px;}
+
+  .btn-primary{font-family:var(--font-body);font-weight:600;font-size:13.5px;padding:10px 18px;border-radius:var(--radius);border:none;background:var(--indigo);color:white;cursor:pointer;display:inline-flex;align-items:center;gap:7px;transition:background .15s;}
+  .btn-primary:hover{background:#3E4FC0;}
+  .btn-primary:disabled{opacity:0.55; cursor:not-allowed;}
+  .btn-ghost{padding:9px 16px;border-radius:var(--radius);border:1px solid var(--border-light);background:transparent;color:inherit;font-family:var(--font-body);font-weight:600;font-size:13px;cursor:pointer;}
+  body.dark .btn-ghost{border-color:var(--border-dark);}
+  .btn-small{font-size:12px; padding:6px 12px;}
+
+  .section-title{font-family:var(--font-display); font-size:16px; font-weight:700; margin:0 0 4px 0;}
+  .section-sub{font-size:12.5px; color:var(--text-muted-light); margin:0 0 16px 0;}
+  body.dark .section-sub{color:var(--text-muted-dark);}
+
+  .ai-badge{display:inline-flex; align-items:center; gap:5px; font-size:10.5px; font-weight:700; text-transform:uppercase; letter-spacing:0.04em; color:var(--purple); background:var(--purple-soft); padding:3px 9px; border-radius:20px; margin-left:8px; vertical-align:middle;}
+  body.dark .ai-badge{background:rgba(139,92,246,0.18);}
+
+  /* ---------- Clean HTML Rendered Output Box ---------- */
+  .formatted-output{
+    background:var(--paper); border:1px solid var(--border-light); border-radius:8px;
+    padding:20px; margin-top:14px; font-size:14px; line-height:1.65; color:var(--text-dark);
+  }
+  body.dark .formatted-output{background:var(--ink); border-color:var(--border-dark); color:var(--text-light);}
+  .formatted-output.empty{color:var(--text-muted-light); font-style:italic;}
+  body.dark .formatted-output.empty{color:var(--text-muted-dark);}
+  .formatted-output h1, .formatted-output h2, .formatted-output h3{font-family:var(--font-display); margin:16px 0 8px 0; color:var(--indigo);}
+  body.dark .formatted-output h1, body.dark .formatted-output h2, body.dark .formatted-output h3{color:#A6B0F5;}
+  .formatted-output ul, .formatted-output ol{margin:8px 0 14px 22px; padding:0;}
+  .formatted-output li{margin-bottom:6px;}
+  .formatted-output p{margin:0 0 10px 0;}
+  .formatted-output hr{border:none; border-top:1px solid var(--border-light); margin:16px 0;}
+  body.dark .formatted-output hr{border-color:var(--border-dark);}
+
+  .spinner{width:14px;height:14px;border:2px solid rgba(255,255,255,0.4);border-top-color:white;border-radius:50%;animation:spin .7s linear infinite;}
+  @keyframes spin{to{transform:rotate(360deg);}}
+
+  /* ---------- Pipeline / CRM ---------- */
+  .pipeline{display:grid; grid-template-columns:repeat(6,1fr); gap:10px; margin-bottom:20px;}
+  @media(max-width:900px){.pipeline{grid-template-columns:repeat(3,1fr);}}
+  .stage-card{background:var(--panel-light); border:1px solid var(--border-light); border-radius:var(--radius); padding:14px 16px; cursor:pointer; position:relative; overflow:hidden;}
+  body.dark .stage-card{background:var(--panel-dark); border-color:var(--border-dark);}
+  .stage-card.active{border-color:var(--stage-color, var(--indigo)); box-shadow:0 0 0 1px var(--stage-color, var(--indigo));}
+  .stage-card::before{content:"";position:absolute;left:0;top:0;bottom:0;width:4px;background:var(--stage-color,var(--indigo));}
+  .stage-count{font-family:var(--font-mono); font-size:22px; font-weight:600; line-height:1;}
+  .stage-label{font-size:11px; font-weight:600; color:var(--text-muted-light); text-transform:uppercase; letter-spacing:0.04em; margin-top:6px;}
+  body.dark .stage-label{color:var(--text-muted-dark);}
+
+  .toolbar{display:flex; gap:10px; align-items:center; margin-bottom:14px; flex-wrap:wrap;}
+  .search-box{flex:1; min-width:200px; position:relative;}
+  .search-box svg{position:absolute; left:13px; top:50%; transform:translateY(-50%); width:15px; height:15px; color:var(--text-muted-light);}
+  body.dark .search-box svg{color:var(--text-muted-dark);}
+  .search-box input{width:100%; padding:10px 14px 10px 36px; border-radius:var(--radius); border:1px solid var(--border-light); background:var(--panel-light); color:inherit; font-size:13.5px;}
+  body.dark .search-box input{background:var(--panel-dark); border-color:var(--border-dark);}
+
+  table{width:100%; border-collapse:collapse;}
+  thead th{text-align:left; font-size:10.5px; text-transform:uppercase; letter-spacing:0.05em; color:var(--text-muted-light); padding:12px 14px; border-bottom:1px solid var(--border-light); font-weight:600;}
+  body.dark thead th{color:var(--text-muted-dark); border-color:var(--border-dark);}
+  tbody td{padding:13px 14px; border-bottom:1px solid var(--border-light); font-size:13px; vertical-align:middle;}
+  body.dark tbody td{border-color:var(--border-dark);}
+  tbody tr:last-child td{border-bottom:none;}
+  tbody tr:hover{background:rgba(76,95,213,0.04);}
+  .cand-name{font-weight:600;}
+  .cand-id{font-family:var(--font-mono); font-size:10.5px; color:var(--text-muted-light);}
+  body.dark .cand-id{color:var(--text-muted-dark);}
+  .stage-pill{display:inline-flex; align-items:center; gap:6px; padding:4px 10px; border-radius:20px; font-size:11.5px; font-weight:600; background:var(--pill-bg,var(--indigo-soft)); color:var(--pill-fg,var(--indigo));}
+  .stage-pill::before{content:"";width:6px;height:6px;border-radius:50%;background:currentColor;}
+  .skill-tag{display:inline-block; font-size:10.5px; padding:2px 8px; border-radius:12px; background:var(--indigo-soft); color:var(--indigo); margin:2px 3px 0 0;}
+  body.dark .skill-tag{background:rgba(76,95,213,0.18);}
+  .row-actions{display:flex; gap:6px; justify-content:flex-end;}
+  .icon-btn{width:28px;height:28px;border-radius:7px;border:1px solid var(--border-light);background:transparent;color:var(--text-muted-light);cursor:pointer;display:flex;align-items:center;justify-content:center;}
+  .icon-btn:hover{background:var(--indigo-soft); color:var(--indigo); border-color:transparent;}
+  .icon-btn.danger:hover{background:var(--red-soft); color:var(--red);}
+  body.dark .icon-btn{border-color:var(--border-dark); color:var(--text-muted-dark);}
+  .icon-btn svg{width:13px;height:13px;}
+  .table-wrap{background:var(--panel-light); border:1px solid var(--border-light); border-radius:var(--radius); overflow:hidden;}
+  body.dark .table-wrap{background:var(--panel-dark); border-color:var(--border-dark);}
+  .empty-state{text-align:center; padding:40px 20px; color:var(--text-muted-light);}
+  body.dark .empty-state{color:var(--text-muted-dark);}
+
+  select.filter-select{padding:10px 14px; border-radius:var(--radius); border:1px solid var(--border-light); background:var(--panel-light); color:inherit; font-size:13.5px; cursor:pointer;}
+  body.dark select.filter-select{background:var(--panel-dark); border-color:var(--border-dark);}
+
+  /* ---------- Dropzone ---------- */
+  .dropzone{
+    border:2px dashed var(--border-light); border-radius:10px; padding:22px 16px;
+    text-align:center; cursor:pointer; transition:border-color .15s, background .15s;
+    margin-bottom:14px;
+  }
+  body.dark .dropzone{border-color:var(--border-dark);}
+  .dropzone:hover, .dropzone.drag-over{border-color:var(--indigo); background:var(--indigo-soft);}
+  body.dark .dropzone.drag-over{background:rgba(76,95,213,0.12);}
+  .dropzone svg{width:24px;height:24px; color:var(--text-muted-light); margin-bottom:6px;}
+  body.dark .dropzone svg{color:var(--text-muted-dark);}
+  .dropzone-text{font-size:13px; color:var(--text-muted-light); font-weight:600;}
+  body.dark .dropzone-text{color:var(--text-muted-dark);}
+  .dropzone-sub{font-size:11.5px; color:var(--text-muted-light); margin-top:2px;}
+  body.dark .dropzone-sub{color:var(--text-muted-dark);}
+
+  .batch-list{margin-top:12px; display:flex; flex-direction:column; gap:8px;}
+  .batch-item{
+    display:flex; align-items:center; justify-content:space-between;
+    background:var(--paper); border:1px solid var(--border-light); padding:10px 14px; border-radius:8px; font-size:12.5px;
+  }
+  body.dark .batch-item{background:var(--ink); border-color:var(--border-dark);}
+
+  /* ---------- Modal ---------- */
+  .modal-overlay{display:none; position:fixed; inset:0; background:rgba(15,20,36,0.6); z-index:100; align-items:center; justify-content:center; padding:20px;}
+  .modal-overlay.open{display:flex;}
+  .modal{background:var(--panel-light); border-radius:14px; width:100%; max-width:520px; padding:26px; max-height:88vh; overflow-y:auto;}
+  body.dark .modal{background:var(--panel-dark-2);}
+  .modal h2{font-family:var(--font-display); font-size:18px; margin:0 0 18px 0;}
+  .modal-actions{display:flex; gap:10px; justify-content:flex-end; margin-top:20px;}
+
+  /* ---------- Analytics ---------- */
+  .stat-grid{display:grid; grid-template-columns:repeat(4,1fr); gap:14px; margin-bottom:18px;}
+  @media(max-width:800px){.stat-grid{grid-template-columns:repeat(2,1fr);}}
+  .stat-card{background:var(--panel-light); border:1px solid var(--border-light); border-radius:var(--radius); padding:16px;}
+  body.dark .stat-card{background:var(--panel-dark); border-color:var(--border-dark);}
+  .stat-value{font-family:var(--font-mono); font-size:26px; font-weight:600;}
+  .stat-label{font-size:11px; color:var(--text-muted-light); text-transform:uppercase; letter-spacing:0.04em; margin-top:4px;}
+  body.dark .stat-label{color:var(--text-muted-dark);}
+  .bar-row{display:flex; align-items:center; gap:10px; margin-bottom:12px;}
+  .bar-label{width:110px; font-size:12.5px; font-weight:500; flex-shrink:0;}
+  .bar-track{flex:1; height:10px; background:var(--paper); border-radius:6px; overflow:hidden;}
+  body.dark .bar-track{background:var(--ink);}
+  .bar-fill{height:100%; border-radius:6px; background:var(--indigo);}
+  .bar-value{width:42px; text-align:right; font-family:var(--font-mono); font-size:12px; color:var(--text-muted-light); flex-shrink:0;}
+  body.dark .bar-value{color:var(--text-muted-dark);}
+
+  /* ---------- Chat (AI Recruiter) ---------- */
+  .chat-window{height:460px; overflow-y:auto; padding:8px; display:flex; flex-direction:column; gap:14px; background:var(--paper); border:1px solid var(--border-light); border-radius:10px;}
+  body.dark .chat-window{background:var(--ink); border-color:var(--border-dark);}
+  .chat-msg{max-width:85%; padding:12px 16px; border-radius:12px; font-size:13.5px; line-height:1.6;}
+  .chat-msg.user{align-self:flex-end; background:var(--indigo); color:white; border-bottom-right-radius:2px;}
+  .chat-msg.assistant{align-self:flex-start; background:var(--panel-light); border:1px solid var(--border-light); border-bottom-left-radius:2px;}
+  body.dark .chat-msg.assistant{background:var(--panel-dark-2); border-color:var(--border-dark);}
+  .chat-input-row{display:flex; gap:10px; margin-top:14px;}
+  .chat-input-row input{flex:1;}
+
+  .job-card{background:var(--panel-light); border:1px solid var(--border-light); border-radius:var(--radius); padding:16px; cursor:pointer;}
+  body.dark .job-card{background:var(--panel-dark); border-color:var(--border-dark);}
+  .job-card.active{border-color:var(--indigo); box-shadow:0 0 0 1px var(--indigo);}
+  .job-card h3{font-family:var(--font-display); font-size:15px; margin:0 0 4px 0;}
+  .job-card .job-meta{font-size:12px; color:var(--text-muted-light);}
+  body.dark .job-card .job-meta{color:var(--text-muted-dark);}
+  .job-status-pill{display:inline-block; font-size:10px; font-weight:700; text-transform:uppercase; letter-spacing:0.03em; padding:3px 9px; border-radius:20px; margin-top:8px;}
+  .job-grid{display:grid; grid-template-columns:repeat(auto-fill,minmax(230px,1fr)); gap:12px; margin-bottom:20px;}
+
+  .toast{position:fixed; bottom:24px; right:24px; background:var(--green); color:white; padding:11px 18px; border-radius:8px; font-size:13px; font-weight:600; z-index:200; box-shadow:0 6px 20px rgba(0,0,0,0.2); display:none;}
+  .toast.show{display:block;}
+
+  .app-footer{
+    padding:16px; border-top:1px solid var(--border-light); text-align:center;
+    font-size:12px; color:var(--text-muted-light); font-weight:500; background:var(--panel-light);
+  }
+  body.dark .app-footer{background:var(--panel-dark); border-color:var(--border-dark); color:var(--text-muted-dark);}
+</style>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/mammoth/1.6.0/mammoth.browser.min.js"></script>
+</head>
+<body>
+
+<div class="app">
+  <div class="sidebar">
+    <div class="brand">
+      <div class="brand-mark"><svg viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2.2" stroke-linecap="round"><path d="M4 12h4l2 5 4-14 2 9h4"/></svg></div>
+      <div>
+        <span class="brand-name">TalentTrack</span>
+        <span class="brand-tag">PROTOTYPE — Designed by Ankur Singh</span>
+      </div>
+    </div>
+    <div class="nav" id="navList"></div>
+    <div class="sidebar-foot">
+      <div class="designer-tag">Designed for Ankur Singh</div>
+    </div>
+  </div>
+
+  <div class="main">
+    <div class="topbar">
+      <div class="topbar-left">
+        <h1 id="viewTitle">Candidate Pipeline</h1>
+        <p id="viewSub">Your recruitment CRM</p>
+      </div>
+      <div class="topbar-center">
+        <span class="ats-banner-tag">A Next Gen ATS Solution</span>
+      </div>
+      <div class="topbar-right">
+        <div class="clock-badge" id="liveClock">--:--:-- --</div>
+        <button class="btn-ghost btn-topbar" id="topSettingsBtn">Settings</button>
+        <button class="btn-ghost btn-topbar" id="topLoginBtn">Log In</button>
+        <button class="btn-primary btn-topbar" id="topSignupBtn">Sign Up</button>
+        <button class="toggle-btn" id="themeToggle" title="Toggle dark/light mode">
+          <svg id="themeIcon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="12" cy="12" r="4"/><path d="M12 2v2M12 20v2M4.9 4.9l1.4 1.4M17.7 17.7l1.4 1.4M2 12h2M20 12h2M4.9 19.1l1.4-1.4M17.7 6.3l1.4-1.4"/></svg>
+        </button>
+      </div>
+    </div>
+
+    <div class="shell" id="shell"></div>
+
+    <footer class="app-footer">
+      © TalentTrack — Designed for Ankur Singh
+    </footer>
+  </div>
+</div>
+
+<!-- Candidate Modal -->
+<div class="modal-overlay" id="modalOverlay">
+  <div class="modal">
+    <h2 id="modalTitle">Add Candidate</h2>
+    <div class="field">
+      <label>Attach resume (optional — auto-fills fields below)</label>
+      <div class="dropzone" id="candDropzone">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><path d="M12 16V4M12 4 7 9M12 4l5 5M4 20h16"/></svg>
+        <div class="dropzone-text">Drag & drop resume file (.pdf, .docx, .txt)</div>
+      </div>
+      <input type="file" id="candFileInput" accept=".pdf,.docx,.txt" style="display:none;">
+      <div id="candFileChipWrap"></div>
+      <div id="candParseStatus" style="font-size:12px; margin-top:6px;"></div>
+    </div>
+    <form id="candidateForm">
+      <input type="hidden" id="candidateId">
+      <input type="hidden" id="candResumeTextHidden">
+      <div class="field"><label>Full Name</label><input type="text" id="fullName" required placeholder="e.g. Priya Sharma"></div>
+      <div class="field"><label>Role Applied For</label><input type="text" id="roleApplied" required placeholder="e.g. Senior Backend Engineer"></div>
+      <div class="field"><label>Email</label><input type="email" id="email" required placeholder="priya@email.com"></div>
+      <div class="field"><label>Phone (optional)</label><input type="text" id="phone" placeholder="+91 98765 43210"></div>
+      <div class="field"><label>Skills (comma separated)</label><input type="text" id="skills" placeholder="Python, AWS, Kubernetes"></div>
+      <div class="two-col">
+        <div class="field"><label>Pipeline Stage</label>
+          <select id="stage">
+            <option value="applied">Applied</option><option value="screening">Screening</option>
+            <option value="interview">Interview</option><option value="offer">Offer</option><option value="hired">Hired</option>
+          </select>
+        </div>
+        <div class="field"><label>Assign to Job (optional)</label><select id="candJobSelect"><option value="">No job linked</option></select></div>
+      </div>
+      <div class="field"><label>Notes (optional)</label><textarea id="notes" placeholder="Quick notes..."></textarea></div>
+      <div class="modal-actions">
+        <button type="button" class="btn-ghost" id="cancelBtn">Cancel</button>
+        <button type="submit" class="btn-primary">Save Candidate</button>
+      </div>
+    </form>
+  </div>
+</div>
+
+<!-- Job Modal -->
+<div class="modal-overlay" id="jobModalOverlay">
+  <div class="modal">
+    <h2 id="jobModalTitle">Add Job Opening</h2>
+    <form id="jobForm">
+      <input type="hidden" id="jobEditId">
+      <div class="field"><label>Job Title</label><input type="text" id="jobTitle" required placeholder="e.g. Senior Backend Engineer"></div>
+      <div class="two-col">
+        <div class="field"><label>Department</label><input type="text" id="jobDept" placeholder="Engineering"></div>
+        <div class="field"><label>Location</label><input type="text" id="jobLoc" placeholder="Ahmedabad, India / Remote"></div>
+      </div>
+      <div class="field"><label>Status</label>
+        <select id="jobStatus">
+          <option value="open">Open</option>
+          <option value="on hold">On Hold</option>
+          <option value="closed">Closed</option>
+        </select>
+      </div>
+      <div class="field">
+        <label>Job Description (Upload file or paste below)</label>
+        <div class="dropzone" id="jobJdDropzone" style="padding:14px;">
+          <div class="dropzone-text">📎 Click to attach JD file (.pdf, .docx, .txt)</div>
+        </div>
+        <input type="file" id="jobJdFileInput" accept=".pdf,.docx,.txt" style="display:none;">
+        <textarea id="jobJdText" style="min-height:120px; margin-top:8px;" placeholder="Paste job description text here..."></textarea>
+      </div>
+      <div class="modal-actions">
+        <button type="button" class="btn-ghost" id="jobCancelBtn">Cancel</button>
+        <button type="submit" class="btn-primary">Save Job Opening</button>
+      </div>
+    </form>
+  </div>
+</div>
+
+<div class="toast" id="toast"></div>
+
+<script>
+/* =========================================================
+   LIVE CLOCK WITH SECONDS
+========================================================= */
+function updateClock(){
+  const now = new Date();
+  const timeStr = now.toLocaleTimeString('en-US', { hour12: true, hour: '2-digit', minute: '2-digit', second: '2-digit' });
+  const dateStr = now.toLocaleDateString('en-GB', { day: '2-digit', month: 'short', year: 'numeric' });
+  const clockEl = document.getElementById('liveClock');
+  if(clockEl) clockEl.textContent = `${timeStr} — ${dateStr}`;
+}
+setInterval(updateClock, 1000);
+updateClock();
+
+/* =========================================================
+   MARKDOWN TO BEAUTIFUL HTML PARSER (FIXES RAW #--- formatting)
+========================================================= */
+function formatMarkdown(text) {
+  if (!text) return '';
+  
+  let html = text
+    .replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;')
+    .replace(/^### (.*$)/gim, '<h3>$1</h3>')
+    .replace(/^## (.*$)/gim, '<h2>$1</h2>')
+    .replace(/^# (.*$)/gim, '<h1>$1</h1>')
+    .replace(/^---$/gim, '<hr>')
+    .replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>')
+    .replace(/\*(.*?)\*/g, '<em>$1</em>')
+    .replace(/`([^`]+)`/g, '<code>$1</code>');
+
+  const lines = html.split('\n');
+  let inUl = false, inOl = false;
+  let out = [];
+
+  lines.forEach(line => {
+    let trimmed = line.trim();
+    if (trimmed.startsWith('* ') || trimmed.startsWith('- ')) {
+      if (inOl) { out.push('</ol>'); inOl = false; }
+      if (!inUl) { out.push('<ul>'); inUl = true; }
+      out.push(`<li>${trimmed.substring(2)}</li>`);
+    } else if (/^\d+\.\s/.test(trimmed)) {
+      if (inUl) { out.push('</ul>'); inUl = false; }
+      if (!inOl) { out.push('<ol>'); inOl = true; }
+      out.push(`<li>${trimmed.replace(/^\d+\.\s/, '')}</li>`);
+    } else {
+      if (inUl) { out.push('</ul>'); inUl = false; }
+      if (inOl) { out.push('</ol>'); inOl = false; }
+      if (trimmed === '<hr>') {
+        out.push('<hr>');
+      } else if (trimmed.length > 0) {
+        if (trimmed.startsWith('<h1') || trimmed.startsWith('<h2') || trimmed.startsWith('<h3')) {
+          out.push(trimmed);
+        } else {
+          out.push(`<p>${trimmed}</p>`);
+        }
+      }
+    }
+  });
+
+  if (inUl) out.push('</ul>');
+  if (inOl) out.push('</ol>');
+
+  return out.join('');
+}
+
+/* =========================================================
+   DATA LAYER
+========================================================= */
+const STAGES = [
+  { key:'applied',   label:'Applied',   color:'#4C5FD5', bg:'#E9EBFC' },
+  { key:'screening', label:'Screening', color:'#8B5CF6', bg:'#F1EBFD' },
+  { key:'interview', label:'Interview', color:'#F5A623', bg:'#FFF3DE' },
+  { key:'offer',     label:'Offer',     color:'#2FAE6B', bg:'#E4F7ED' },
+  { key:'hired',     label:'Hired',     color:'#0EA5A5', bg:'#E1F6F6' },
+];
+const CAND_KEY='talenttrack_candidates_v3', THEME_KEY='talenttrack_theme_v1', CHAT_KEY='talenttrack_chat_v2';
+
+let candidates = JSON.parse(localStorage.getItem(CAND_KEY)||'null') || seedData();
+function seedData(){
+  const s=[
+    {id:cid(),fullName:'Priya Sharma',roleApplied:'Senior Backend Engineer',email:'priya.sharma@email.com',phone:'+91 98765 43210',stage:'interview',skills:['Python','AWS','Kubernetes'],notes:'Strong in distributed systems.',interviewDate:''},
+    {id:cid(),fullName:'Arjun Mehta',roleApplied:'Product Designer',email:'arjun.mehta@email.com',phone:'',stage:'applied',skills:['Figma','UX Research'],notes:'',interviewDate:''},
+    {id:cid(),fullName:'Sara Al-Farsi',roleApplied:'Data Analyst',email:'sara.alfarsi@email.com',phone:'+971 55 123 4567',stage:'offer',skills:['SQL','Power BI'],notes:'Offer sent.',interviewDate:''},
+    {id:cid(),fullName:'Rahul Verma',roleApplied:'Senior Backend Engineer'
